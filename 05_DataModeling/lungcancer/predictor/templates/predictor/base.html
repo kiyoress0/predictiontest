@@ -1,0 +1,45 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="AI-powered lung cancer risk prediction tool using machine learning. Get your risk assessment in seconds.">
+    <title>{% block title %}Lung Cancer Risk Predictor{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'predictor/style.css' %}">
+</head>
+<body>
+    <div class="bg-gradient"></div>
+    <div class="floating-orb orb-1"></div>
+    <div class="floating-orb orb-2"></div>
+    <div class="floating-orb orb-3"></div>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="{% url 'predictor:home' %}" class="nav-brand">
+                <span class="nav-icon">🫁</span>
+                <span class="nav-title">LungGuard<span class="nav-ai">AI</span></span>
+            </a>
+            <div class="nav-links">
+                <a href="{% url 'predictor:home' %}" class="nav-link">Predict</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <p>⚠️ This tool is for educational purposes only. Always consult healthcare professionals for medical advice.</p>
+            <p class="footer-sub">Built with Django & Logistic Regression • ADY201m Data Modeling Project</p>
+        </div>
+    </footer>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

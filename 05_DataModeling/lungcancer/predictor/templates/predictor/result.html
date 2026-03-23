@@ -1,0 +1,117 @@
+{% extends "predictor/base.html" %}
+
+{% block title %}Your Risk Assessment — LungGuard AI{% endblock %}
+
+{% block content %}
+<section class="results-section">
+    <h1 class="results-heading">Your Risk Assessment</h1>
+
+    <!-- Risk Gauge -->
+    <div class="result-card glass-card {% if result.prediction == 1 %}high-risk{% else %}low-risk{% endif %}">
+        <div class="risk-gauge-container">
+            <div class="risk-gauge">
+                <svg viewBox="0 0 200 120" class="gauge-svg">
+                    <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="12" stroke-linecap="round"/>
+                    <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none"
+                          stroke="{% if result.prediction == 1 %}url(#high-gradient){% else %}url(#low-gradient){% endif %}"
+                          stroke-width="12" stroke-linecap="round"
+                          stroke-dasharray="251.2" stroke-dashoffset="{{ gauge_offset }}"
+                          class="gauge-fill"/>
+                    <defs>
+                        <linearGradient id="high-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" style="stop-color:#f59e0b"/>
+                            <stop offset="100%" style="stop-color:#ef4444"/>
+                        </linearGradient>
+                        <linearGradient id="low-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" style="stop-color:#22d3ee"/>
+                            <stop offset="100%" style="stop-color:#10b981"/>
+                        </linearGradient>
+                    </defs>
+                </svg>
+                <div class="gauge-value">{{ result.probability }}%</div>
+                <div class="gauge-label">Risk Probability</div>
+            </div>
+        </div>
+
+        <div class="risk-badge {% if result.prediction == 1 %}badge-high{% else %}badge-low{% endif %}">
+            {% if result.prediction == 1 %}
+                <span class="badge-icon">⚠️</span>
+            {% else %}
+                <span class="badge-icon">✅</span>
+            {% endif %}
+            <span class="badge-text">{{ result.risk_level }}</span>
+        </div>
+
+        <div class="model-accuracy">
+            <span class="accuracy-label">Model Accuracy:</span>
+            <span class="accuracy-value">{{ result.accuracy }}%</span>
+        </div>
+    </div>
+
+    <!-- Top Risk Factors -->
+    <div class="factors-card glass-card" style="animation-delay: 0.2s">
+        <h2 class="factors-title">
+            <span class="factors-icon">📋</span>
+            Top Contributing Factors
+        </h2>
+        <div class="factors-list">
+            {% for factor in result.top_factors %}
+            <div class="factor-item">
+                <div class="factor-info">
+                    <span class="factor-name">{{ factor.name }}</span>
+                    <span class="factor-value">Value: {{ factor.value }}</span>
+                </div>
+                <div class="factor-bar-container">
+                    <div class="factor-bar {% if factor.direction == 'increasing' %}bar-increasing{% else %}bar-decreasing{% endif %}"
+                         style="width: {% widthratio factor.contribution 1 20 %}%">
+                    </div>
+                </div>
+                <span class="factor-direction {% if factor.direction == 'increasing' %}dir-up{% else %}dir-down{% endif %}">
+                    {% if factor.direction == 'increasing' %}↑ Risk{% else %}↓ Risk{% endif %}
+                </span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Disclaimer -->
+    <div class="disclaimer glass-card" style="animation-delay: 0.3s">
+        <p>⚠️ <strong>Important:</strong> This prediction is based on a machine learning model trained on sample data.
+        It should <strong>not</strong> replace professional medical evaluation. Please consult your doctor for proper screening and diagnosis.</p>
+    </div>
+
+    <div class="action-buttons">
+        <a href="{% url 'predictor:home' %}" class="back-btn">
+            <span>←</span> New Assessment
+        </a>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Animate the gauge fill on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        const gaugeFill = document.querySelector('.gauge-fill');
+        if (gaugeFill) {
+            const targetOffset = gaugeFill.getAttribute('stroke-dashoffset');
+            gaugeFill.style.strokeDashoffset = '251.2';
+            setTimeout(() => {
+                gaugeFill.style.transition = 'stroke-dashoffset 1.5s ease-out';
+                gaugeFill.style.strokeDashoffset = targetOffset;
+            }, 300);
+        }
+
+        // Animate factor bars
+        const bars = document.querySelectorAll('.factor-bar');
+        bars.forEach((bar, index) => {
+            const targetWidth = bar.style.width;
+            bar.style.width = '0%';
+            setTimeout(() => {
+                bar.style.transition = 'width 0.8s ease-out';
+                bar.style.width = targetWidth;
+            }, 500 + index * 150);
+        });
+    });
+</script>
+{% endblock %}

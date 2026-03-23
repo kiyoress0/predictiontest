@@ -1,0 +1,202 @@
+{% extends "predictor/base.html" %}
+
+{% block title %}Lung Cancer Risk Predictor — Assess Your Risk{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <h1 class="hero-title">
+        Lung Cancer <span class="gradient-text">Risk Predictor</span>
+    </h1>
+    <p class="hero-subtitle">
+        Answer 29 health-related questions and our AI model will assess your lung cancer risk using advanced machine learning.
+    </p>
+</section>
+
+<form method="post" action="{% url 'predictor:predict' %}" class="prediction-form" id="prediction-form">
+    {% csrf_token %}
+
+    <!-- Demographics -->
+    <div class="form-section glass-card" style="animation-delay: 0.1s">
+        <div class="section-header">
+            <span class="section-icon">👤</span>
+            <h2 class="section-title">Demographics</h2>
+        </div>
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="age">Age</label>
+                {{ form.age }}
+            </div>
+            <div class="form-group">
+                <label for="gender">Gender</label>
+                {{ form.gender }}
+            </div>
+            <div class="form-group">
+                <label for="education_years">Education (years)</label>
+                {{ form.education_years }}
+            </div>
+            <div class="form-group">
+                <label for="income_level">Income Level</label>
+                {{ form.income_level }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Smoking & Exposure -->
+    <div class="form-section glass-card" style="animation-delay: 0.2s">
+        <div class="section-header">
+            <span class="section-icon">🚬</span>
+            <h2 class="section-title">Smoking & Environmental Exposure</h2>
+        </div>
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="smoker">Smoker</label>
+                {{ form.smoker }}
+            </div>
+            <div class="form-group">
+                <label for="smoking_years">Smoking Years</label>
+                {{ form.smoking_years }}
+            </div>
+            <div class="form-group">
+                <label for="cigarettes_per_day">Cigarettes/Day</label>
+                {{ form.cigarettes_per_day }}
+            </div>
+            <div class="form-group">
+                <label for="pack_years">Pack Years</label>
+                {{ form.pack_years }}
+            </div>
+            <div class="form-group">
+                <label for="passive_smoking">Passive Smoking</label>
+                {{ form.passive_smoking }}
+            </div>
+            <div class="form-group">
+                <label for="air_pollution_index">Air Pollution Index</label>
+                {{ form.air_pollution_index }}
+            </div>
+            <div class="form-group">
+                <label for="occupational_exposure">Occupational Exposure</label>
+                {{ form.occupational_exposure }}
+            </div>
+            <div class="form-group">
+                <label for="radon_exposure">Radon Exposure</label>
+                {{ form.radon_exposure }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Medical History -->
+    <div class="form-section glass-card" style="animation-delay: 0.3s">
+        <div class="section-header">
+            <span class="section-icon">🏥</span>
+            <h2 class="section-title">Medical History</h2>
+        </div>
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="family_history_cancer">Family History of Cancer</label>
+                {{ form.family_history_cancer }}
+            </div>
+            <div class="form-group">
+                <label for="copd">COPD</label>
+                {{ form.copd }}
+            </div>
+            <div class="form-group">
+                <label for="asthma">Asthma</label>
+                {{ form.asthma }}
+            </div>
+            <div class="form-group">
+                <label for="previous_tb">Previous TB</label>
+                {{ form.previous_tb }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Symptoms -->
+    <div class="form-section glass-card" style="animation-delay: 0.4s">
+        <div class="section-header">
+            <span class="section-icon">🩺</span>
+            <h2 class="section-title">Current Symptoms</h2>
+        </div>
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="chronic_cough">Chronic Cough</label>
+                {{ form.chronic_cough }}
+            </div>
+            <div class="form-group">
+                <label for="chest_pain">Chest Pain</label>
+                {{ form.chest_pain }}
+            </div>
+            <div class="form-group">
+                <label for="shortness_of_breath">Shortness of Breath</label>
+                {{ form.shortness_of_breath }}
+            </div>
+            <div class="form-group">
+                <label for="fatigue">Fatigue</label>
+                {{ form.fatigue }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Health Metrics -->
+    <div class="form-section glass-card" style="animation-delay: 0.5s">
+        <div class="section-header">
+            <span class="section-icon">📊</span>
+            <h2 class="section-title">Health Metrics</h2>
+        </div>
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="bmi">BMI</label>
+                {{ form.bmi }}
+            </div>
+            <div class="form-group">
+                <label for="oxygen_saturation">Oxygen Saturation (%)</label>
+                {{ form.oxygen_saturation }}
+            </div>
+            <div class="form-group">
+                <label for="fev1_x10">FEV1 (×10)</label>
+                {{ form.fev1_x10 }}
+            </div>
+            <div class="form-group">
+                <label for="crp_level">CRP Level</label>
+                {{ form.crp_level }}
+            </div>
+            <div class="form-group">
+                <label for="xray_abnormal">X-Ray Abnormal</label>
+                {{ form.xray_abnormal }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Lifestyle -->
+    <div class="form-section glass-card" style="animation-delay: 0.6s">
+        <div class="section-header">
+            <span class="section-icon">🏃</span>
+            <h2 class="section-title">Lifestyle</h2>
+        </div>
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="exercise_hours_per_week">Exercise (hours/week)</label>
+                {{ form.exercise_hours_per_week }}
+            </div>
+            <div class="form-group">
+                <label for="diet_quality">Diet Quality</label>
+                {{ form.diet_quality }}
+            </div>
+            <div class="form-group">
+                <label for="alcohol_units_per_week">Alcohol (units/week)</label>
+                {{ form.alcohol_units_per_week }}
+            </div>
+            <div class="form-group">
+                <label for="healthcare_access">Healthcare Access</label>
+                {{ form.healthcare_access }}
+            </div>
+        </div>
+    </div>
+
+    <div class="submit-section">
+        <button type="submit" class="submit-btn" id="submit-btn">
+            <span class="btn-icon">🔬</span>
+            <span class="btn-text">Analyze Risk</span>
+            <span class="btn-arrow">→</span>
+        </button>
+    </div>
+</form>
+{% endblock %}
